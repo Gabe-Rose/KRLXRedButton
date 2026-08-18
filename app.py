@@ -47,14 +47,27 @@ def show_at_time():
 
   try:
     cursor.execute("""
-    SELECT * FROM users 
-    INNER JOIN show_user ON users.id = show_user.user_id
-    INNER JOIN shows ON show_user.show_id = shows.id
+    SELECT 
+    GROUP_CONCAT(users.name SEPARATOR '; ') AS users
+    GROUP_CONCAT(users.year SEPARATOR '; ') AS years
+    GROUP_CONCAT(users.email SEPARATOR '; ') AS emails
+    GROUP_CONCAT(users.phone_number SEPARATOR '; ') AS phone_numbers
+    GROUP_CONCAT(users.pronouns SEPARATOR '; ') AS pronouns
+    shows.title
+    shows.term_id
+    shows.published_day
+    shows.published_start
+    shows.published_end
+    FROM shows 
+    LEFT JOIN show_user ON shows.id = show_user.show_id
+    LEFT JOIN users ON show_user.user_id = users.id
     WHERE 
     shows.term_id = %s AND
     shows.published_day = %s AND
     shows.published_start >= %s AND
-    shows.published_start < %s""",
+    shows.published_start < %s
+    GROUP BY shows.id
+    ORDER BY shows.published_start ASC""",
     (term, day, start_time_min, start_time_max))
 
     users = cursor.fetchall()
