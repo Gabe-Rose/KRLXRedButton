@@ -48,11 +48,11 @@ def show_at_time():
   try:
     cursor.execute("""
     SELECT 
-    GROUP_CONCAT(users.name SEPARATOR '; ') AS users
-    GROUP_CONCAT(users.year SEPARATOR '; ') AS years
-    GROUP_CONCAT(users.email SEPARATOR '; ') AS emails
-    GROUP_CONCAT(users.phone_number SEPARATOR '; ') AS phone_numbers
-    GROUP_CONCAT(users.pronouns SEPARATOR '; ') AS pronouns
+    GROUP_CONCAT(users.name SEPARATOR ', ') AS users
+    GROUP_CONCAT(users.year SEPARATOR ', ') AS years
+    GROUP_CONCAT(users.email SEPARATOR ' ') AS emails
+    GROUP_CONCAT(users.phone_number SEPARATOR ', ') AS phone_numbers
+    GROUP_CONCAT(users.pronouns SEPARATOR ', ') AS pronouns
     shows.title
     shows.term_id
     shows.published_day
