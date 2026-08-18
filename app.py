@@ -7,8 +7,8 @@ CURL w GET:
 curl -G http://mc.krlx.org:5212/api/show_at_time \
   -d "term=2026-SP" \
   -d "day=Monday" \
-  -d "start_time_min=12:00" \
-  -d "start_time_max=13:00"
+  -d "start_time_min=13:00" \
+  -d "start_time_max=14:00"
 '''
 
 db_config = {
@@ -46,13 +46,14 @@ def show_at_time():
   start_time_max = request.args.get('start_time_max')
 
   try:
-    cursor.execute("""
+    cursor.execute(
+    """
     SELECT 
-    GROUP_CONCAT(users.name SEPARATOR ', ') AS users,
-    GROUP_CONCAT(users.year SEPARATOR ', ') AS years,
-    GROUP_CONCAT(users.email SEPARATOR ' ') AS emails,
-    GROUP_CONCAT(users.phone_number SEPARATOR ', ') AS phone_numbers,
-    GROUP_CONCAT(users.pronouns SEPARATOR ', ') AS pronouns,
+    GROUP_CONCAT(users.name SEPARATOR '; ') AS users,
+    GROUP_CONCAT(users.year SEPARATOR '; ') AS years,
+    GROUP_CONCAT(users.email SEPARATOR '; ') AS emails,
+    GROUP_CONCAT(users.phone_number SEPARATOR '; ') AS phone_numbers,
+    GROUP_CONCAT(users.pronouns SEPARATOR '; ') AS pronouns,
     shows.title,
     shows.term_id,
     shows.published_day,
@@ -67,7 +68,8 @@ def show_at_time():
     shows.published_start >= %s AND
     shows.published_start < %s
     GROUP BY shows.id
-    ORDER BY shows.published_start ASC""",
+    ORDER BY shows.published_start ASC
+    """,
     (term, day, start_time_min, start_time_max))
 
     users = cursor.fetchall()
