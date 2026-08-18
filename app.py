@@ -2,6 +2,15 @@ from flask import Flask, request, jsonify
 import mysql.connector
 import mysql_config as config
 
+'''
+CURL w GET:
+curl -G http://mc.krlx.org:5212/api/show_at_time \
+  -d "term=2026-SP" \
+  -d "day=Monday" \
+  -d "start_time_min=12:00" \
+  -d "start_time_max=13:00"
+'''
+
 db_config = {
   'host': config.HOST,
   'user': config.USERNAME,
@@ -19,17 +28,14 @@ HOST='0.0.0.0'
 
 app = Flask(__name__)
 
-@app.route('/api/')
-def home():
-  return 'home'
-
 '''
 GET:
 term: <str> 20xx-(SP,WI,FA)
 day: <str> (Monday,...)
-time: <str> 00:00
+start_time_min: <str> 00:00
+start_time_max: <str> 00:00
 '''
-@app.route('/api/show_at_time', methods=['GET'])
+@app.route('/api/show_at_time/', methods=['GET'])
 def show_at_time():
   connection = get_db_connection()
   cursor = connection.cursor(dictionary=True) 
@@ -47,7 +53,7 @@ def show_at_time():
     WHERE 
     shows.term_id = %s AND
     shows.published_day = %s AND
-    shows.published_start > %s AND
+    shows.published_start >= %s AND
     shows.published_start < %s""",
     (term, day, start_time_min, start_time_max))
 
