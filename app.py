@@ -35,7 +35,7 @@ day: <str> (Monday,...)
 start_time_min: <str> 00:00
 start_time_max: <str> 00:00
 '''
-@app.route('/api/show_at_time/', methods=['GET'])
+@app.route('/api/show_at_time', methods=['GET'])
 def show_at_time():
   connection = get_db_connection()
   cursor = connection.cursor(dictionary=True) 
