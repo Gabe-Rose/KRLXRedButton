@@ -82,8 +82,8 @@ def get_current_term():
     cursor.execute(
       """
       SELECT id FROM terms
-      WHERE start_timestamp <= NOW()
-      ORDER BY start_timestamp DESC
+      WHERE on_air <= NOW()
+      ORDER BY on_air DESC
       LIMIT 1
       """)
     row = cursor.fetchone()
