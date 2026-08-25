@@ -61,11 +61,9 @@ def query_db(term, day, current_time):
       (term, day, current_time, current_time))
 
     row = cursor.fetchone()
-    if row:
-      row_dict = dict(zip([col[0] for col in cursor.description], row))
-      return row_dict
-    else:
+    if row is None:
       return {"error" : "empty"}
+    return row
       
   except mysql.connector.Error as err:
     return {"error": str(err)}
@@ -91,11 +89,9 @@ def get_current_term():
       """)
     row = cursor.fetchone()
     if row:
-      row_dict = dict(zip([col[0] for col in cursor.description], row))
-      return row_dict
-    else:
       return {"error" : "empty"}
-      
+    return row
+       
   except mysql.connector.Error as err:
     return {"error": str(err)}
         
