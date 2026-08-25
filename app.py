@@ -62,10 +62,10 @@ def query_db(term, day, current_time):
 
     shows = cursor.fetchall()
     
-    return jsonify(shows)
+    return shows
       
   except mysql.connector.Error as err:
-    return jsonify({"error": str(err)}), 500
+    return {"error": str(err)}
          
   finally:
     cursor.close()
@@ -87,10 +87,10 @@ def get_current_term():
       LIMIT 1
       """)
     row = cursor.fetchone()
-    return jsonify(row)
+    return row
       
   except mysql.connector.Error as err:
-    return jsonify({"error": str(err)}), 500
+    return {"error": str(err)}
         
   finally:
     cursor.close()
@@ -116,14 +116,14 @@ def index_page():
     utc = datetime.now(timezone.utc)
     mn_time = utc.astimezone(ZoneInfo("America/Chicago"))
     current_term = get_current_term()
-    if current_term.get("error") != None:
+    if current_term.get("error") is not None:
        abort(500)
 
     term_in = current_term['id']
     day_in = mn_time.strftime('%A')
     time_in = mn_time.strftime("%H:%M")
     show = query_db(term_in, day_in, time_in)
-    if show.get("error") != None:
+    if show.get("error") is not None:
       abort(500)
 
     title = show['title']
@@ -167,7 +167,7 @@ def show_at_time():
   term = request.args.get('term')
   day = request.args.get('day')
   current_time = request.args.get('time')
-  return query_db(term, day, current_time)
+  return jsonify(query_db(term, day, current_time))
 
 @app.errorhandler(404)
 def page_not_found(error):
