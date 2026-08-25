@@ -116,15 +116,14 @@ def index_page():
     utc = datetime.now(timezone.utc)
     mn_time = utc.astimezone(ZoneInfo("America/Chicago"))
     current_term = get_current_term()
-    return current_term
-    if current_term['error'] != None:
+    if current_term.get("error") != None:
        abort(500)
 
     term_in = current_term['id']
     day_in = mn_time.strftime('%A')
     time_in = mn_time.strftime("%H:%M")
     show = query_db(term_in, day_in, time_in)
-    if show['error'] != None:
+    if show.get("error") != None:
       abort(500)
 
     title = show['title']
