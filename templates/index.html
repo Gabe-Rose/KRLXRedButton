@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Home</title>    
+<link rel="stylesheet" href="{{url_for('static',filename='main_style.css')}}">
+</head>
+<body>
+
+<h1>Did the next host(s) not show up!?!?</h1>
+<h2>How dare they do that >:(</h2>
+<h2>Click to get their contact info:</h2>
+
+<div class="centerFlexbox">
+<a href="" class="buttonImg">
+  <img src="/static/image.png" alt="Button to get current hosts">
+</a>
+</div>
+
+<div class="it-contact">If this page is not working as intended email it@krlx.org</div>
+
+<img src="/static/left.png" class="meme-left">
+<img src="/static/right.png" class="meme-right">
+
+<div class="centerFlexbox">
+{% if title %}
+<div class="query-wrapper">
+  <div class="query-show-section"> {{ title }}
+  {{ term }} {{ day }}
+  {{ start }} - {{ end }}
+  </div>
+  {% for host in hosts %}
+    <div class="query-user-section">
+      {{ host }} 
+    </div>
+  {% endfor %}
+</div>
+{% endif %} 
+</div>
+
+<script>
+  // Redirects after 6 min (260000ms)
+  setTimeout(() => {
+    window.location.href = "https://http:/cd/mc.krlx.org:5212/";
+  }, 360000);
+</script>
+
+
+</body>
+</html>

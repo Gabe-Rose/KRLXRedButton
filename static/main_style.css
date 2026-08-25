@@ -1,0 +1,71 @@
+body {
+    padding: 10px;
+    min-width: 760px;
+    padding-top:30px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.buttonImg {
+  height: 350px;
+  width: 350px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.buttonImg:hover {
+  background-color: #565656;
+}
+
+.meme-left {
+  position: absolute;
+  top: 190px;
+  left: 350px;
+  height: 550px;
+  width: auto;
+}
+.meme-right {
+  position: absolute;
+  top: 190px;
+  right: 350px;
+  height: 550px;
+  width: auto;
+}
+
+.query-wrapper {
+  background-color: #ff4b4b;
+  padding: 8px;
+  margin-top: 30px;
+}
+
+.query-show-section {
+  white-space: pre-line;
+  text-align: center;
+  font-size: 30px;
+}
+
+.query-user-section {
+  white-space: pre-line;
+  font-size: 20px;
+}
+
+.it-contact {
+  font-size: 15px;
+  text-align: center;
+}
+
+.centerFlexbox {
+  display: flex;
+  justify-content: center;
+}

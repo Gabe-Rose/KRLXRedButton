@@ -1,4 +1,13 @@
-from flask import Flask, request, jsonify
+'''
+Flask app has:
+an api endpoint (/api/show_at_time) that returns json of a show at time queried
+has a homepage
+'''
+
+from flask import Flask, abort, request, render_template, jsonify
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+
 import mysql.connector
 import mysql_config as config
 
@@ -7,8 +16,7 @@ CURL w GET:
 curl -G http://mc.krlx.org:5212/api/show_at_time \
   -d "term=2026-SP" \
   -d "day=Monday" \
-  -d "start_time_min=13:00" \
-  -d "start_time_max=14:00"
+  -d "time=13:10"
 '''
 
 db_config = {
@@ -22,66 +30,156 @@ def get_db_connection():
     #Establishes and returns a database connection
     return mysql.connector.connect(**db_config)
 
+def query_db(term, day, current_time):
+  connection = get_db_connection()
+  cursor = connection.cursor(dictionary=True) 
+  try:
+    cursor.execute(
+      """
+      SELECT 
+      GROUP_CONCAT(users.name SEPARATOR '; ') AS names,
+      GROUP_CONCAT(users.year SEPARATOR '; ') AS years,
+      GROUP_CONCAT(users.email SEPARATOR '; ') AS emails,
+      GROUP_CONCAT(users.phone_number SEPARATOR '; ') AS phone_numbers,
+      GROUP_CONCAT(users.pronouns SEPARATOR '; ') AS pronouns,
+      shows.title,
+      shows.term_id,
+      shows.published_day,
+      shows.published_start,
+      shows.published_end
+      FROM shows 
+      LEFT JOIN show_user ON shows.id = show_user.show_id
+      LEFT JOIN users ON show_user.user_id = users.id
+      WHERE 
+      shows.term_id = %s AND
+      shows.published_day = %s AND
+      shows.published_start <= %s AND
+      shows.published_end > %s
+      GROUP BY shows.id
+      ORDER BY shows.published_start ASC
+      """,
+      (term, day, current_time, current_time))
+
+    shows = cursor.fetchall()
+    
+    return jsonify(shows)
+      
+  except mysql.connector.Error as err:
+    return jsonify({"error": str(err)}), 500
+         
+  finally:
+    cursor.close()
+    connection.close()
+
+
+'''
+gets the most recent term
+'''
+def get_current_term():
+  connection = get_db_connection()
+  cursor = connection.cursor(dictionary=True) 
+  try:
+    cursor.execute(
+      """
+      SELECT id FROM terms
+      WHERE start_timestamp <= NOW()
+      ORDER BY start_timestamp DESC
+      LIMIT 1
+      """)
+    row = cursor.fetchone()
+    return jsonify(row)
+      
+  except mysql.connector.Error as err:
+    return jsonify({"error": str(err)}), 500
+        
+  finally:
+    cursor.close()
+    connection.close()
+     
+
 
 PORT=5212
 HOST='0.0.0.0'
 
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def index_page():
+  title = None
+  term = None
+  day = None
+  start = None
+  end = None
+  hosts = None
+  if request.args.get('query') == 'True':
+    utc = datetime.now(timezone.utc)
+    mn_time = utc.astimezone("America/Chicago")
+    current_term = get_current_term()
+    if current_term['error'] != None:
+       abort(200)
+
+    term_in = current_term['id']
+    day_in = dt.strftime('%A')
+    time_in = dt.strftime("%H:%M")
+    show = query_db(term_in, day_in, time_in)
+    if show['error'] != None:
+      abort(200)
+
+    title = show['title']
+    term = show['term_id']
+    day = show['published_day']
+    start = show['published_start']
+    end = show['published_end']
+
+    names = ['n1', 'n2']
+    years = ['2001', '2002']
+    emails = ['n1@email.com', 'n2@email.com']
+    phone_numbers = ['000-000-0001', '000-000-0002']
+    pronouns = ['he/him', 'she/her']
+    hosts = []
+    for i in range(0, len(names)):
+      hosts.append(names[i] + \
+      '\n   Class Of: ' + years[i] + \
+      '\n   Email: ' + emails[i] + \
+      '\n   Phone: ' + phone_numbers[i] + \
+      '\n   Pronouns: ' + pronouns[i])
+    
+      
+  return render_template('index.html', 
+    hosts = hosts,
+    title = title,
+    term = term, 
+    day = day,
+    start = start,
+    end = end)
+
 '''
 GET:
 term: <str> 20xx-(SP,WI,FA)
 day: <str> (Monday,...)
-start_time_min: <str> 00:00
-start_time_max: <str> 00:00
+time: <str> 00:00
 '''
 @app.route('/api/show_at_time', methods=['GET'])
 def show_at_time():
-  connection = get_db_connection()
-  cursor = connection.cursor(dictionary=True) 
-
   term = request.args.get('term')
   day = request.args.get('day')
-  start_time_min = request.args.get('start_time_min')
-  start_time_max = request.args.get('start_time_max')
+  current_time = request.args.get('time')
+  return query_db(term, day, current_time)
 
-  try:
-    cursor.execute(
-    """
-    SELECT 
-    GROUP_CONCAT(users.name SEPARATOR '; ') AS users,
-    GROUP_CONCAT(users.year SEPARATOR '; ') AS years,
-    GROUP_CONCAT(users.email SEPARATOR '; ') AS emails,
-    GROUP_CONCAT(users.phone_number SEPARATOR '; ') AS phone_numbers,
-    GROUP_CONCAT(users.pronouns SEPARATOR '; ') AS pronouns,
-    shows.title,
-    shows.term_id,
-    shows.published_day,
-    shows.published_start,
-    shows.published_end
-    FROM shows 
-    LEFT JOIN show_user ON shows.id = show_user.show_id
-    LEFT JOIN users ON show_user.user_id = users.id
-    WHERE 
-    shows.term_id = %s AND
-    shows.published_day = %s AND
-    shows.published_start >= %s AND
-    shows.published_start < %s
-    GROUP BY shows.id
-    ORDER BY shows.published_start ASC
-    """,
-    (term, day, start_time_min, start_time_max))
+@app.errorhandler(404)
+def page_not_found(error):
+    # Pass the 404 status code explicitly at the end of the return statement
+    return "404 page not found"
 
-    users = cursor.fetchall()
-    
-    return jsonify(users)
-      
-  except mysql.connector.Error as err:
-    return jsonify({"error": str(err)}), 500
-      
-  finally:
-    cursor.close()
-    connection.close()
+@app.errorhandler(500)
+def page_not_found(error):
+    # Pass the 404 status code explicitly at the end of the return statement
+    return "500 there was an error"
+
+@app.errorhandler(200)
+def page_not_found(error):
+    # Pass the 404 status code explicitly at the end of the return statement
+    return "200 there was an error"
 
 if __name__ == '__main__':
     app.run(host=HOST, port=PORT)
