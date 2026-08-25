@@ -11,7 +11,7 @@
 <h2>Click to get their contact info:</h2>
 
 <div class="centerFlexbox">
-<a href="{{ url_for('/', query='True') }}" class="buttonImg">
+<a href="{{ url_for(request.endpoint, query='true') }}" class="buttonImg">
   <img src="/static/image.png" alt="Button to get current hosts">
 </a>
 </div>
@@ -41,7 +41,7 @@
   if ({{ redirect|lower }}) {
     // Redirects after 6 min (260000ms)
     setTimeout(() => {
-      window.location.href = "http:/mc.krlx.org:5212/";
+      window.location.href = "{{ url_for(request.endpoint) }}";
     }, 360000);
   }
 </script>
