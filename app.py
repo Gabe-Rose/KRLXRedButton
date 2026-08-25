@@ -88,7 +88,7 @@ def get_current_term():
       LIMIT 1
       """)
     row = cursor.fetchone()
-    if row = None:
+    if row is None:
       return {"error" : "empty"}
     return row
        
