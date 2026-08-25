@@ -116,14 +116,14 @@ def index_page():
     mn_time = utc.astimezone("America/Chicago")
     current_term = get_current_term()
     if current_term['error'] != None:
-       abort(200)
+       abort(500)
 
     term_in = current_term['id']
     day_in = dt.strftime('%A')
     time_in = dt.strftime("%H:%M")
     show = query_db(term_in, day_in, time_in)
     if show['error'] != None:
-      abort(200)
+      abort(500)
 
     title = show['title']
     term = show['term_id']
@@ -175,11 +175,6 @@ def page_not_found(error):
 def page_not_found(error):
     # Pass the 404 status code explicitly at the end of the return statement
     return "500 there was an error"
-
-@app.errorhandler(200)
-def page_not_found(error):
-    # Pass the 404 status code explicitly at the end of the return statement
-    return "200 there was an error"
 
 if __name__ == '__main__':
     app.run(host=HOST, port=PORT)
