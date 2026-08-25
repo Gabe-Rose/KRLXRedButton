@@ -111,6 +111,7 @@ def index_page():
   start = None
   end = None
   hosts = None
+  redirect = False
   if request.args.get('query') == 'True':
     utc = datetime.now(timezone.utc)
     mn_time = utc.astimezone("America/Chicago")
@@ -143,15 +144,17 @@ def index_page():
       '\n   Email: ' + emails[i] + \
       '\n   Phone: ' + phone_numbers[i] + \
       '\n   Pronouns: ' + pronouns[i])
+
+    redirect = True
     
-      
   return render_template('index.html', 
     hosts = hosts,
     title = title,
     term = term, 
     day = day,
     start = start,
-    end = end)
+    end = end,
+    redirect = redirect)
 
 '''
 GET:

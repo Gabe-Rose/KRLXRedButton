@@ -11,7 +11,7 @@
 <h2>Click to get their contact info:</h2>
 
 <div class="centerFlexbox">
-<a href="" class="buttonImg">
+<a href="http:/mc.krlx.org:5212?query=True" class="buttonImg">
   <img src="/static/image.png" alt="Button to get current hosts">
 </a>
 </div>
@@ -38,10 +38,12 @@
 </div>
 
 <script>
-  // Redirects after 6 min (260000ms)
-  setTimeout(() => {
-    window.location.href = "https://http:/cd/mc.krlx.org:5212/";
-  }, 360000);
+  if ({{ redirect|lower }}) {
+    // Redirects after 6 min (260000ms)
+    setTimeout(() => {
+      window.location.href = "http:/mc.krlx.org:5212/";
+    }, 360000);
+  }
 </script>
 
 
