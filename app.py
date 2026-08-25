@@ -116,6 +116,7 @@ def index_page():
     utc = datetime.now(timezone.utc)
     mn_time = utc.astimezone(ZoneInfo("America/Chicago"))
     current_term = get_current_term()
+    print(current_term)
     if current_term['error'] != None:
        abort(500)
 
