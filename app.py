@@ -114,14 +114,14 @@ def index_page():
   redirect = False
   if request.args.get('query') == 'True':
     utc = datetime.now(timezone.utc)
-    mn_time = utc.astimezone("America/Chicago")
+    mn_time = utc.astimezone(ZoneInfo("America/Chicago"))
     current_term = get_current_term()
     if current_term['error'] != None:
        abort(500)
 
     term_in = current_term['id']
-    day_in = dt.strftime('%A')
-    time_in = dt.strftime("%H:%M")
+    day_in = mn_time.strftime('%A')
+    time_in = mn_time.strftime("%H:%M")
     show = query_db(term_in, day_in, time_in)
     if show['error'] != None:
       abort(500)
