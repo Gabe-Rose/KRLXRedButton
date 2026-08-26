@@ -116,7 +116,7 @@ def get_current_term():
     connection.close()
      
 
-
+#Parameters used for development mode
 PORT=5212
 HOST='0.0.0.0'
 

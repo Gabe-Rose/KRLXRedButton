@@ -31,14 +31,14 @@ img {
 .meme-left {
   position: absolute;
   top: 190px;
-  left: 350px;
+  left: 15%;
   height: 550px;
   width: auto;
 }
 .meme-right {
   position: absolute;
   top: 190px;
-  right: 350px;
+  right: 15%;
   height: 550px;
   width: auto;
 }
