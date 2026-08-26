@@ -57,9 +57,7 @@ def query_db(term, day, current_time):
       WHERE 
       shows.term_id = %s AND
       (
-      (
-      
-      shows.published_start <= shows.published_end)
+      (shows.published_start <= shows.published_end)
       )
       GROUP BY shows.id
       ORDER BY shows.published_start ASC
@@ -81,6 +79,8 @@ def query_db(term, day, current_time):
     """
 
     row = cursor.fetchone()
+    #clear remaining rows (there shouldnt be any)
+    cursor.fetchall()
     if row is None:
       return {"error" : "empty"}
     return row
