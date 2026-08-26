@@ -161,7 +161,7 @@ def index_page():
     hosts = []
     for i in range(0, len(names)):
       hosts.append(names[i] + \
-      '\n   Class Of: ' + years[i] + \
+      '\n   Class of ' + years[i] + \
       '\n   Email: ' + emails[i] + \
       '\n   Phone: ' + phone_numbers[i] + \
       '\n   Pronouns: ' + pronouns[i])
@@ -187,7 +187,6 @@ time: <str> 00:00
 def show_at_time():
   term = request.args.get('term')
   day = request.args.get('day')
-  next_day = request.args.get('next_day')
   current_time = request.args.get('time')
   return jsonify(query_db(term, day, current_time))
 
