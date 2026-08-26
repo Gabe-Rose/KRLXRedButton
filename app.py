@@ -72,8 +72,7 @@ def query_db(term, day, current_time):
       )
       GROUP BY shows.id
       ORDER BY shows.published_start ASC
-      """,
-      (term))
+      """, [term])
 
     row = cursor.fetchone()
     if row is None:
