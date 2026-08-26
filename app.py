@@ -61,6 +61,14 @@ def query_db(term, day, current_time):
       shows.published_start <= @query_time AND
       shows.published_end > @query_time AND
       shows.published_start <= shows.published_end)
+      OR
+      (shows.published_day = @query_day AND
+      shows.published_start <= @query_time AND
+      shows.published_start > shows.published_end)
+      OR
+      (shows.published_day = @query_prev_day AND
+      shows.published_end >= @query_time AND
+      shows.published_start > shows.published_end)
       )
       GROUP BY shows.id
       ORDER BY shows.published_start ASC
@@ -126,9 +134,9 @@ def index_page():
     utc = datetime.now(timezone.utc)
     mn_time = utc.astimezone(ZoneInfo("America/Chicago"))
     current_term = get_current_term()
-    #return current_term
+    return current_term
     if current_term.get("error") is not None:
-       abort(500)
+      abort(500)
 
     term_in = current_term['id']
     day_in = mn_time.strftime('%A')
