@@ -66,7 +66,7 @@ def query_db(term, day, current_time):
       shows.published_start <= @query_time AND
       shows.published_start > shows.published_end)
       OR
-      (shows.published_day = @query_next_day AND
+      (shows.published_day = @query_prev_day AND
       shows.published_end >= @query_time AND
       shows.published_start > shows.published_end)
       )
