@@ -57,10 +57,18 @@ def query_db(term, day, current_time):
       WHERE 
       shows.term_id = %s AND
       (
-      (shows.published_day = @query_day AND
+      (
       shows.published_start <= @query_time AND
       shows.published_end > @query_time AND
       shows.published_start <= shows.published_end)
+      )
+      GROUP BY shows.id
+      ORDER BY shows.published_start ASC
+      """, [term])
+
+    """
+      shows.published_day = @query_day AND
+
       OR
       (shows.published_day = @query_day AND
       shows.published_start <= @query_time AND
@@ -69,10 +77,7 @@ def query_db(term, day, current_time):
       (shows.published_day = @query_prev_day AND
       shows.published_end >= @query_time AND
       shows.published_start > shows.published_end)
-      )
-      GROUP BY shows.id
-      ORDER BY shows.published_start ASC
-      """, [term])
+    """
 
     row = cursor.fetchone()
     if row is None:
