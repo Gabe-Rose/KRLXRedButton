@@ -37,7 +37,7 @@ def query_db(term, day, current_time):
     days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     day_i = days.index(day)
     prev_day = days[day_i -1]
-    cursor.execute("SET @query_day = %s, @query_prev_day = %s, @query_time = %s", (day, prev_day, time))
+    cursor.execute("SET @query_day = %s, @query_prev_day = %s, @query_time = %s", (day, prev_day, current_time))
     cursor.execute(
       """
       SELECT 
