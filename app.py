@@ -57,16 +57,17 @@ def query_db(term, day, current_time):
       WHERE 
       shows.term_id = %s AND
       (
-      (shows.published_start <= shows.published_end)
+      (shows.published_start <= shows.published_end AND
+      shows.published_day = @query_day AND
+      shows.published_start <= @query_time AND
+      shows.published_end > @query_time)
       )
       GROUP BY shows.id
       ORDER BY shows.published_start ASC
       """, [term])
 
     """
-      shows.published_day = @query_day AND
-      shows.published_start <= @query_time AND
-      shows.published_end > @query_time AND
+      
 
       OR
       (shows.published_day = @query_day AND
