@@ -34,6 +34,10 @@ def query_db(term, day, current_time):
   connection = get_db_connection()
   cursor = connection.cursor(dictionary=True) 
   try:
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    day_i = days.index(day)
+    prev_day = days[day_i -1]
+    cursor.execute("SET @query_day = %s, @query_prev_day = %s, @query_time = %s", (day, prev_day, time))
     cursor.execute(
       """
       SELECT 
@@ -52,13 +56,24 @@ def query_db(term, day, current_time):
       LEFT JOIN users ON show_user.user_id = users.id
       WHERE 
       shows.term_id = %s AND
-      shows.published_day = %s AND
-      shows.published_start <= %s AND
-      shows.published_end > %s
+      (
+      (shows.published_day = @query_day AND
+      shows.published_start <= @query_time AND
+      shows.published_end > @query_time AND
+      shows.published_start <= shows.published_end)
+      OR
+      (shows.published_day = @query_day AND
+      shows.published_start <= @query_time AND
+      shows.published_start > shows.published_end)
+      OR
+      (shows.published_day = @query_next_day AND
+      shows.published_end >= @query_time AND
+      shows.published_start > shows.published_end)
+      )
       GROUP BY shows.id
       ORDER BY shows.published_start ASC
       """,
-      (term, day, current_time, current_time))
+      (term))
 
     row = cursor.fetchone()
     if row is None:
@@ -171,6 +186,7 @@ time: <str> 00:00
 def show_at_time():
   term = request.args.get('term')
   day = request.args.get('day')
+  next_day = request.args.get('next_day')
   current_time = request.args.get('time')
   return jsonify(query_db(term, day, current_time))
 
