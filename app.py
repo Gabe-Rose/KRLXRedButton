@@ -137,9 +137,9 @@ def index_page():
     if current_term.get("error") is not None:
       abort(500)
 
-    term_in = str(current_term.get('id'))
-    day_in = str(mn_time.strftime('%A'))
-    time_in = str(mn_time.strftime("%H:%M"))
+    term_in = current_term.get("id")
+    day_in = mn_time.strftime("%A")
+    time_in = mn_time.strftime("%H:%M")
     show = query_db(term_in, day_in, time_in)
     return show
     if show.get("error") is not None:
