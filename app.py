@@ -137,11 +137,11 @@ def index_page():
     start = show['published_start']
     end = show['published_end']
 
-    names = ['n1', 'n2']
-    years = ['2001', '2002']
-    emails = ['n1@email.com', 'n2@email.com']
-    phone_numbers = ['000-000-0001', '000-000-0002']
-    pronouns = ['he/him', 'she/her']
+    names = show['names'].split(';')
+    years = show['years'].split(';')
+    emails = show['emails'].split(';')
+    phone_numbers = show['phone_numbers'].split(';')
+    pronouns = show['pronouns'].split(';')
     hosts = []
     for i in range(0, len(names)):
       hosts.append(names[i] + \
